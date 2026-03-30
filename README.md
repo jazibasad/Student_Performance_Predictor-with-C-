@@ -15,6 +15,7 @@ The model is trained on the **UCI Student Performance Dataset** (`student_data.c
 
 ---
 
+
 ## 🛠️ Setup Instructions
 
 ### Prerequisites
@@ -58,3 +59,5 @@ To build and run the project as a containerized build environment:
 * `StudentData.cs`: Data schemas for input features and prediction results.
 * `Dockerfile`: Multi-stage build configuration for .NET 8.
 * `.dockerignore`: Optimization file to prevent build context errors.
+
+<img width="2560" height="1440" alt="Image" src="https://github.com/user-attachments/assets/76c5a361-403b-440a-b4e9-02f1e2db457d" />
