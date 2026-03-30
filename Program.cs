@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace Student_Performance_Predictor
 {
     internal static class Program
