@@ -13,104 +13,100 @@ namespace Student_Performance_Predictor
 
         public Form1()
         {
-            // FORM SETTINGS: Increased width to 650 to prevent cutting
-            this.Text = "Student Grade Predictor AI";
-            this.Size = new Size(650, 750);
-            this.BackColor = Color.FromArgb(240, 240, 240);
+            // 1. Make the window much wider and taller
+            this.Text = "Student Performance Predictor - Clear View";
+            this.Size = new Size(800, 800);
+            this.BackColor = Color.White;
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.Padding = new Padding(20);
 
-            SetupSpaciousUI();
+            SetupGridUI();
 
+            // Auto-train logic
             string dataPath = Path.Combine(Application.StartupPath, "student_data.csv");
             if (File.Exists(dataPath)) mlManager.Train(dataPath);
         }
 
-        private void SetupSpaciousUI()
+        private void SetupGridUI()
         {
-            // HEADER
-            Panel header = new Panel { Dock = DockStyle.Top, Height = 100, BackColor = Color.FromArgb(28, 40, 51) };
-            Label title = new Label
+            // 2. Use a TableLayoutPanel to prevent any overlapping
+            TableLayoutPanel grid = new TableLayoutPanel
             {
-                Text = "STUDENT PERFORMANCE ANALYSIS",
-                ForeColor = Color.White,
-                Font = new Font("Arial", 22, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.Fill
-            };
-            header.Controls.Add(title);
-            this.Controls.Add(header);
-
-            // MAIN CONTAINER (White Card)
-            Panel card = new Panel
-            {
-                Size = new Size(550, 550),
-                Location = new Point(40, 120),
+                Dock = DockStyle.Fill,
+                ColumnCount = 2,
+                RowCount = 8,
                 BackColor = Color.White,
-                Padding = new Padding(20)
+                AutoScroll = true
             };
-            this.Controls.Add(card);
 
-            int yOffset = 30;
-            // Labels are now much wider (300px) and textboxes follow
-            txtStudy = CreateInputRow(card, "Study Time (1 to 4):", ref yOffset);
-            txtFailures = CreateInputRow(card, "Past Failures (0 to 3):", ref yOffset);
-            txtAbsences = CreateInputRow(card, "Absences (0 to 93):", ref yOffset);
-            txtG1 = CreateInputRow(card, "G1 Grade (0 to 20):", ref yOffset);
-            txtG2 = CreateInputRow(card, "G2 Grade (0 to 20):", ref yOffset);
+            // Set column widths (40% for labels, 60% for textboxes)
+            grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
 
-            // PREDICT BUTTON
-            Button btn = new Button
+            // Define modern fonts
+            Font labelFont = new Font("Segoe UI", 14, FontStyle.Bold);
+            Font inputFont = new Font("Segoe UI", 16);
+
+            // Add Input Rows
+            txtStudy = AddGridRow(grid, "Study Time (1-4):", labelFont, inputFont, 0);
+            txtFailures = AddGridRow(grid, "Past Failures (0-3):", labelFont, inputFont, 1);
+            txtAbsences = AddGridRow(grid, "Absences (0-93):", labelFont, inputFont, 2);
+            txtG1 = AddGridRow(grid, "G1 Grade (0-20):", labelFont, inputFont, 3);
+            txtG2 = AddGridRow(grid, "G2 Grade (0-20):", labelFont, inputFont, 4);
+
+            // Predict Button (Spans both columns)
+            Button btnPredict = new Button
             {
-                Text = "PREDICT FINAL GRADE",
-                Size = new Size(470, 60),
-                Location = new Point(40, yOffset + 20),
-                BackColor = Color.FromArgb(39, 174, 96),
+                Text = "CALCULATE PREDICTION",
+                Dock = DockStyle.Fill,
+                Height = 80,
+                BackColor = Color.Navy,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Arial", 14, FontStyle.Bold),
-                Cursor = Cursors.Hand
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                Margin = new Padding(10, 30, 10, 10)
             };
-            btn.Click += BtnPredict_Click;
-            card.Controls.Add(btn);
+            btnPredict.Click += BtnPredict_Click;
+            grid.Controls.Add(btnPredict, 0, 5);
+            grid.SetColumnSpan(btnPredict, 2);
 
-            // RESULT LABEL
+            // Result Label (Spans both columns)
             lblResult = new Label
             {
                 Text = "Result will appear here",
-                Size = new Size(470, 50),
-                Location = new Point(40, yOffset + 100),
-                Font = new Font("Arial", 18, FontStyle.Bold),
+                Dock = DockStyle.Fill,
+                Height = 100,
                 TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.DimGray
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = Color.DarkSlateGray
             };
-            card.Controls.Add(lblResult);
+            grid.Controls.Add(lblResult, 0, 6);
+            grid.SetColumnSpan(lblResult, 2);
+
+            this.Controls.Add(grid);
         }
 
-        private TextBox CreateInputRow(Panel parent, string labelText, ref int y)
+        private TextBox AddGridRow(TableLayoutPanel panel, string text, Font lblF, Font txtF, int row)
         {
-            // Wider label to ensure text is never cut
             Label lbl = new Label
             {
-                Text = labelText,
-                Location = new Point(40, y),
-                Width = 250,
-                Font = new Font("Arial", 12, FontStyle.Bold),
-                ForeColor = Color.Black
+                Text = text,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = lblF,
+                Padding = new Padding(0, 0, 10, 0)
             };
 
             TextBox txt = new TextBox
             {
-                Location = new Point(300, y - 5),
-                Width = 210,
-                Font = new Font("Arial", 14),
-                BorderStyle = BorderStyle.FixedSingle
+                Dock = DockStyle.Fill,
+                Font = txtF,
+                BorderStyle = BorderStyle.FixedSingle,
+                Margin = new Padding(10, 15, 50, 15) // Adds space around the box
             };
 
-            parent.Controls.Add(lbl);
-            parent.Controls.Add(txt);
-            y += 70; // High vertical spacing
+            panel.Controls.Add(lbl, 0, row);
+            panel.Controls.Add(txt, 1, row);
             return txt;
         }
 
@@ -127,11 +123,11 @@ namespace Student_Performance_Predictor
                     G2 = float.Parse(txtG2.Text),
                     Health = 3
                 };
-                float score = mlManager.Predict(input);
-                lblResult.Text = $"PREDICTED G3: {score:F2}";
-                lblResult.ForeColor = score >= 10 ? Color.Green : Color.Red;
+                float result = mlManager.Predict(input);
+                lblResult.Text = $"PREDICTED GRADE: {result:F2}";
+                lblResult.ForeColor = result >= 10 ? Color.Green : Color.Red;
             }
-            catch { MessageBox.Show("Please enter valid numbers in all fields."); }
+            catch { MessageBox.Show("Please check that all boxes have numbers."); }
         }
     }
 }
