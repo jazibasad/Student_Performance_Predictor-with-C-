@@ -1,19 +1,27 @@
-# 1. Use the .NET 8 SDK to build
+# STAGE 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# 2. Copy the project file and restore
+# Copy and restore
 COPY ["Student_Performance_Predictor.csproj", "./"]
-RUN dotnet restore "Student_Performance_Predictor.csproj"
+RUN dotnet restore
 
-# 3. Copy everything else and build for Windows
+# Copy all files
 COPY . .
-RUN dotnet publish "Student_Performance_Predictor.csproj" -c Release -o /app/publish -r win-x64 --self-contained false
 
-# 4. Use the Runtime image
+# CHANGE: Target win-x64 so WinForms libraries are included
+RUN dotnet publish "Student_Performance_Predictor.csproj" \
+    -c Release \
+    -o /app/publish \
+    -r win-x64 \
+    --self-contained false
+
+# STAGE 2: Runtime
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 WORKDIR /app
-COPY --from=build /app/publish .
-COPY student_data.csv . 
 
+# Copy the published files
+COPY --from=build /app/publish .
+
+# Run the DLL using the dotnet command
 ENTRYPOINT ["dotnet", "Student_Performance_Predictor.dll"]
