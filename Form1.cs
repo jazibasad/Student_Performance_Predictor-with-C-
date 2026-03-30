@@ -51,8 +51,8 @@ namespace Student_Performance_Predictor
             txtStudy = AddGridRow(grid, "Study Time (1-4):", labelFont, inputFont, 0);
             txtFailures = AddGridRow(grid, "Past Failures (0-3):", labelFont, inputFont, 1);
             txtAbsences = AddGridRow(grid, "Absences (0-93):", labelFont, inputFont, 2);
-            txtG1 = AddGridRow(grid, "G1 Grade (0-20):", labelFont, inputFont, 3);
-            txtG2 = AddGridRow(grid, "G2 Grade (0-20):", labelFont, inputFont, 4);
+            txtG1 = AddGridRow(grid, "G1 Grade (lower-level) (0-20):", labelFont, inputFont, 3);
+            txtG2 = AddGridRow(grid, "G2 Grade (High-level)  (0-20):", labelFont, inputFont, 4);
 
             // Predict Button (Spans both columns)
             Button btnPredict = new Button
